@@ -75,4 +75,5 @@ class LinkedListItemTest < MiniTest::Unit::TestCase
     assert lli1 < lli2
     assert lli2 > lli1
   end
+
 end
