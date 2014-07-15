@@ -23,7 +23,14 @@ class LinkedListItem
   end
 
   def <=>(other_item)
-    self.payload.to_s <=> other_item.payload.to_s
+    if self.payload.class == other_item.payload.class
+      self.payload <=> other_item.payload
+    else
+      precedence = [Fixnum, String, Symbol]
+      left = precedence.index(self.payload.class)
+      right = precedence.index(other_item.payload.class)
+      left <=> right
+    end
   end
 
 end

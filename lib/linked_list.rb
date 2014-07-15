@@ -18,11 +18,64 @@ class LinkedList
     if index == 0
       @first_item = get_list_item(1)
     else
-      deleted = get_list_item(index)
       prev = get_list_item(index - 1)
       new_next = get_list_item(index + 1)
       prev.next_item = new_next
     end
+  end
+
+  def sorted?
+    return true if self.size <= 1
+    @size.times do |i|
+      current_item = self.get_list_item(i)
+
+      unless current_item.last?
+        results = current_item <=> current_item.next_item
+        if results == 1
+          return false
+        end
+      end
+    end
+  end
+
+  def sort!
+    swapped = true
+    while swapped do
+      swapped = false
+      if self.size > 1
+        0.upto(@size - 2) do |i|
+          current_item = self.get_list_item(i)
+          second_item = current_item.next_item
+          result = current_item <=> second_item
+
+          if result == 1
+            self.swap_with_next(i)
+            swapped = true
+          end
+        end
+      end
+    end
+  end
+
+  def swap_with_next(i)
+    raise IndexError if i >= self.size - 1
+    current_item = self.get_list_item(i)
+    second_item = current_item.next_item
+
+    if i > 0
+      self.get_list_item(i-1).next_item = second_item
+    elsif i == 0
+      @first_item = second_item
+    end
+
+    if second_item.last?
+      current_item.next_item = nil
+    else
+      current_item.next_item = second_item.next_item
+    end
+
+    second_item.next_item = current_item
+    swapped = true
   end
 
   def []=(index, value)
@@ -70,15 +123,17 @@ class LinkedList
   end
 
   def to_s
-    if @size == 0
-      "| |"
-    elsif @size > 0
-      list = []
-      @size.times do |i|
-        list.push(self.get(i))
+    result = "|"
+    current_item = @first_item
+    until current_item.nil?
+      result << " #{current_item.payload}"
+      unless current_item.last?
+        result << ","
       end
-      "| "+list.join(', ')+" |"
+      current_item = current_item.next_item
     end
+    result << " |"
+    result
   end
 
   def index(value)
